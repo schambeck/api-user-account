@@ -1,0 +1,43 @@
+spring:
+  main:
+    banner-mode: off
+  application:
+    name: api-user-account
+  datasource:
+    url: jdbc:mysql://localhost:3306/user_account
+    username: root
+    password: example
+  boot:
+    admin:
+      client:
+        url: http://localhost:9999
+        instance:
+          metadata:
+            tags:
+              environment: dev
+        enabled: false
+        auto-deregistration: true
+server:
+  port: 8090
+  error:
+    include-stacktrace: never
+springdoc:
+  swagger-ui:
+    use-root-path: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    tags:
+      application: ${spring.application.name}
+logging:
+  file:
+    name: api-user-account.log
+info:
+  tags:
+    environment: dev

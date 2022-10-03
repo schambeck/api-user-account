@@ -1,0 +1,41 @@
+version: '3.9'
+services:
+  web:
+    image: api-user-account:latest
+    networks:
+      - schambeck-net
+    environment:
+      - SERVER_PORT=0
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/user_account
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=example
+      - SPRING_BOOT_ADMIN_CLIENT_URL=http://srv-spring-admin:9999
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 384M
+        reservations:
+          memory: 256M
+    ports:
+      - "8080:8080"
+  db:
+    image: 'mysql'
+    command: --default-authentication-plugin=mysql_native_password
+    networks:
+      schambeck-net:
+        aliases:
+          - db
+    environment:
+      - MYSQL_ROOT_PASSWORD=example
+      - MYSQL_DATABASE=user_account
+  adminer:
+    image: adminer
+    restart: always
+    networks:
+      - schambeck-net
+    ports:
+      - "8888:8080"
+networks:
+  schambeck-net:
+    external: true

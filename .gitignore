@@ -1,0 +1,10 @@
+# Project exclude paths
+/.gradle/
+/contract/.gradle/
+/contract/build/
+/contract/build/classes/java/main/
+/contract/build/classes/java/test/
+/contract/api-user-account.log
+/impl/build/
+/impl/build/classes/java/main/
+/.idea/

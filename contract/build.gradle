@@ -1,0 +1,87 @@
+plugins {
+    id 'org.springframework.boot' version '2.7.4'
+    id 'io.spring.dependency-management' version '1.0.14.RELEASE'
+    id 'jacoco'
+    id 'java'
+    id "org.sonarqube" version "3.4.0.2513"
+}
+
+group = 'br.com.sbt'
+version = '1.0.0'
+sourceCompatibility = '11'
+targetCompatibility = '11'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    set('springCloudVersion', "2021.0.4")
+    set('springBootAdminVersion', "2.7.4")
+}
+
+dependencies {
+    implementation project(':impl')
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springdoc:springdoc-openapi-ui:1.6.11'
+    implementation 'de.codecentric:spring-boot-admin-starter-client'
+    implementation 'org.mapstruct:mapstruct:1.5.2.Final'
+    compileOnly 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.2.Final'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'io.rest-assured:spring-mock-mvc:5.2.0'
+    testImplementation 'nl.jqno.equalsverifier:equalsverifier:3.10.1'
+    testRuntimeOnly 'com.h2database:h2'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        mavenBom "de.codecentric:spring-boot-admin-dependencies:${springBootAdminVersion}"
+    }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+task stage(dependsOn: ['build', 'clean'])
+build.mustRunAfter clean
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.50
+            }
+        }
+    }
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+    }
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectKey", "schambeck_api-user-account_contract"
+        property "sonar.organization", "schambeck"
+        property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco.xml"
+    }
+}
+
+springBoot {
+    buildInfo()
+}
